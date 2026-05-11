@@ -1,9 +1,9 @@
-import tkinter as tk
+import customtkinter as ctk
 
-class App:
+class App(ctk.CTk):
     def __init__(self):
-        self.root = tk.Tk()
+        super().__init__()
 
     def run(self):
-        self.root.mainloop()
+        self.mainloop()
 
