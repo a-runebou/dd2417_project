@@ -2,7 +2,7 @@ import re
 import pickle
 from collections import Counter
 
-from text_utils import clean_text
+from utils.text_utils import clean_text
 
 
 def extract_words_from_text(text: str, lowercase: bool = True) -> Counter:

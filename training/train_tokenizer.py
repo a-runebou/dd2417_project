@@ -1,8 +1,8 @@
 import argparse
 import os
 
-from tokenizer import Tokenizer
-from text_utils import read_and_clean_text_files
+from transformer.tokenizer import Tokenizer
+from utils.text_utils import read_and_clean_text_files
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Train tokenizer from raw text files.")

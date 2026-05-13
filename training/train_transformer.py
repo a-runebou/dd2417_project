@@ -8,9 +8,9 @@ import torch
 from torch import nn
 from torch.utils.data import Dataset, DataLoader
 
-from tokenizer import Tokenizer
-from transformer_lm import TransformerModel, Config
-from text_utils import read_and_clean_text_files
+from transformer.tokenizer import Tokenizer
+from transformer.transformer_lm import TransformerModel, Config
+from utils.text_utils import read_and_clean_text_files
 
 
 class TokenSequenceDataset(Dataset):

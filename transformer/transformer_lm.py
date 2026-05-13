@@ -7,8 +7,8 @@ from torch import nn, optim
 
 from datetime import datetime
 from dataclasses import dataclass, asdict
-from tokenizer import Tokenizer
-from self_attention import MultiHeadSelfAttention
+from transformer.tokenizer import Tokenizer
+from transformer.self_attention import MultiHeadSelfAttention
 
 
 class PositionwiseFFN(nn.Module):

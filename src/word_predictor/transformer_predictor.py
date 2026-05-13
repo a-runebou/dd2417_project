@@ -1,7 +1,7 @@
 import math
 import torch
 
-from word_predictor.text_state import split_context_prefix
+from utils.text_state import split_context_prefix
 
 
 class TransformerWordPredictor:
