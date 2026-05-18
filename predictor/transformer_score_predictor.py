@@ -5,7 +5,7 @@ from utils.text_state import split_context_prefix
 
 from predictor.base import BasePredictor
 
-class TransformerPredictor(BasePredictor):
+class TransformerScorePredictor(BasePredictor):
     """
     Transformer language model -> whole-word predictor
     

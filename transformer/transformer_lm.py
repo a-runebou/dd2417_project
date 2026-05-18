@@ -111,7 +111,7 @@ class TransformerModel(nn.Module):
             if top_k is not None:
                 # Only consider the top k classes 
                 top_idx = torch.topk(logits, top_k)[1]
-                mask = torch.ones(self.config.vocab_size, dtype=torch.bool)
+                mask = torch.ones(self.config.vocab_size, dtype=torch.bool, device=logits.device)
                 mask[top_idx] = False
                 logits[mask] = float('-inf')
             probs = torch.softmax(logits, dim=-1)
