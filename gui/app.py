@@ -5,6 +5,8 @@ class App(ctk.CTk):
         super().__init__()
         self.predictors = predictors
 
+        self.num_preds = 3
+
         self.build_ui()
 
     
@@ -12,33 +14,55 @@ class App(ctk.CTk):
         self.geometry("700x500")
         self.title("Word Predictor")
 
+        self.grid_columnconfigure((0, 1, 2), weight=1)
+
         self.text_entry = ctk.CTkEntry(self, placeholder_text="Skriv här...")
-        self.text_entry.grid(row=1, column=0,
+        self.text_entry.grid(row=0, column=0, 
                         columnspan=3, padx=20, pady=20,
                         sticky="ew")
         self.text_entry.bind("<KeyRelease>", self.on_key_release)
-        
+
         self.model_selection = ctk.CTkOptionMenu(self, values=["Ngram", "Transformer"])
-        self.model_selection.grid(row=2, column=0,
+        self.model_selection.grid(row=1, column=0,
                                   padx=20, pady=20,
                                   sticky="ew")
-        
+
         self.num_preds_label = ctk.CTkLabel(self, text="Number of predictions: ")
-        self.num_preds_label.grid(row=2, column=1,
+        self.num_preds_label.grid(row=1, column=1, 
                                   padx=20, pady=20,
                                   sticky="ew")
-        
-        self.num_preds_entry = ctk.CTkEntry(self, placeholder_text="3")
-        self.num_preds_entry.grid(row=2, column=2,
-                                  padx=20, pady=20,
-                                  sticky="ew")
-        
+
+        num_preds_frame = ctk.CTkFrame(self, fg_color="transparent")
+        num_preds_frame.grid(row=1, column=2, padx=20, pady=20, sticky="ew")
+        num_preds_frame.grid_columnconfigure(0, weight=1)
+
+        self.num_preds_entry = ctk.CTkEntry(num_preds_frame, placeholder_text="3")
+        self.num_preds_entry.grid(row=0, column=0, 
+                                  padx=(0, 5), sticky="ew")
+
+        self.apply_button = ctk.CTkButton(num_preds_frame, text="Apply", width=60, command=self.apply_num_preds)
+        self.apply_button.grid(row=0, column=1)
+
+        self.suggestions_frame = ctk.CTkFrame(self, fg_color="transparent")
+        self.suggestions_frame.grid(row=2, column=0, columnspan=3, padx=20, pady=20, sticky="ew")
+
         self.suggestion_buttons = []
-        for i in range(3):                          # TODO: fixa så att den kan variera antalet knappar för suggestions
-            btn = ctk.CTkButton(self, text="", command= lambda i=i: self.on_suggestion_click(i))
-            btn.grid(row=3, column=i,
-                     padx=20, pady=20,
-                     sticky="ew")
+        self.rebuild_suggestion_buttons()
+
+    def apply_num_preds(self):
+        val = self.num_preds_entry.get()
+        if val.isdigit() and int(val) > 0:
+            self.num_preds = int(val)
+            self.rebuild_suggestion_buttons()
+
+    def rebuild_suggestion_buttons(self):
+        for btn in self.suggestion_buttons:
+            btn.destroy()
+        self.suggestion_buttons = []
+        for i in range(self.num_preds):
+            self.suggestions_frame.grid_columnconfigure(i, weight=1)
+            btn = ctk.CTkButton(self.suggestions_frame, text="", command=lambda i=i: self.on_suggestion_click(i))
+            btn.grid(row=0, column=i, padx=5, sticky="ew")
             self.suggestion_buttons.append(btn)
 
 
