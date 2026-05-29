@@ -53,64 +53,67 @@ def run_evaluate(filepath: str, predictor, num_preds: int = 3, output_path: str 
     sentence_results = []
 
     out = open(output_path, 'w', encoding='utf-8') if output_path else sys.stdout
+    output_lines = []
 
-    try:
-        print("=" * 50, file=out)
-        print("Evaluation Setup", file=out)
-        print(f"  Predictor  : {predictor_name}", file=out)
-        print(f"  Test set   : {filepath}", file=out)
-        print(f"  Num preds  : {num_preds}", file=out)
-        print("=" * 50, file=out)
-        print(file=out)
+    output_lines.append("=" * 50)
+    output_lines.append("Evaluation Setup")
+    output_lines.append(f"  Predictor  : {predictor_name}")
+    output_lines.append(f"  Test set   : {filepath}")
+    output_lines.append(f"  Num preds  : {num_preds}")
+    output_lines.append("=" * 50)
+    output_lines.append("")
+    out.write("\n".join(output_lines))
+    output_lines = []
 
-        with open(filepath, 'r', encoding='utf-8') as f:
-            total_lines = sum(1 for _ in f)
+    with open(filepath, 'r', encoding='utf-8') as f:
+        lines = [l.strip() for l in f if l.strip()]
 
-        with open(filepath, 'r', encoding='utf-8') as f:
-            for line in tqdm(f, total=total_lines, desc="hej"):
-                line = line.strip()
-                if not line:
-                    continue
+    for line in tqdm(lines, desc="hej"):
+        line = line.strip()
+        if not line:
+            continue
 
-                try:
-                    sentences = nltk.sent_tokenize(line)
-                except LookupError:
-                    nltk.download('punkt')
-                    sentences = nltk.sent_tokenize(line)
+        try:
+            sentences = nltk.sent_tokenize(line)
+        except LookupError:
+            nltk.download('punkt')
+            sentences = nltk.sent_tokenize(line)
 
-                for sentence in sentences:
-                    ks_with, ks_without = evaluate(predictor, sentence, num_preds)
-                    saved = ks_without - ks_with
-                    percentage = (saved / ks_without * 100) if ks_without > 0 else 0.0
+        for sentence in sentences:
+            ks_with, ks_without = evaluate(predictor, sentence, num_preds)
+            saved = ks_without - ks_with
+            percentage = (saved / ks_without * 100) if ks_without > 0 else 0.0
 
-                    sentence_results.append((sentence, ks_with, ks_without, saved, percentage))
-                    total_with += ks_with
-                    total_without += ks_without
+            sentence_results.append((sentence, ks_with, ks_without, saved, percentage))
+            total_with += ks_with
+            total_without += ks_without
 
-                    print(f"Sentence : {sentence}", file=out)
-                    print(f"  Keystrokes without predictor : {ks_without}", file=out)
-                    print(f"  Keystrokes with predictor    : {ks_with}", file=out)
-                    print(f"  Keystrokes saved             : {saved}", file=out)
-                    print(f"  Reduction                    : {percentage:.1f}%", file=out)
-                    print(file=out)
+            output_lines.append(f"Sentence : {sentence}")
+            output_lines.append(f"  Keystrokes without predictor : {ks_without}")
+            output_lines.append(f"  Keystrokes with predictor    : {ks_with}")
+            output_lines.append(f"  Keystrokes saved             : {saved}")
+            output_lines.append(f"  Reduction                    : {percentage:.1f}%")
+            output_lines.append("")
 
-        total_saved = total_without - total_with
-        overall_percentage = (total_saved / total_without * 100) if total_without > 0 else 0.0
-        avg_saved = (sum(r[3] for r in sentence_results) / len(sentence_results)) if sentence_results else 0.0
-        avg_percentage = (sum(r[4] for r in sentence_results) / len(sentence_results)) if sentence_results else 0.0
+    total_saved = total_without - total_with
+    overall_percentage = (total_saved / total_without * 100) if total_without > 0 else 0.0
+    avg_saved = (sum(r[3] for r in sentence_results) / len(sentence_results)) if sentence_results else 0.0
+    avg_percentage = (sum(r[4] for r in sentence_results) / len(sentence_results)) if sentence_results else 0.0
 
-        print("=" * 50, file=out)
-        print(f"Sentences evaluated       : {len(sentence_results)}", file=out)
-        print(f"Total keystrokes (no pred): {total_without}", file=out)
-        print(f"Total keystrokes (pred)   : {total_with}", file=out)
-        print(f"Total keystrokes saved    : {total_saved}", file=out)
-        print(f"Overall reduction         : {overall_percentage:.1f}%", file=out)
-        print(f"Avg keystrokes saved/sent : {avg_saved:.1f}", file=out)
-        print(f"Avg reduction/sentence    : {avg_percentage:.1f}%", file=out)
-        print("=" * 50, file=out)
-    finally:
-        if output_path:
-            out.close()
+    output_lines.append("=" * 50)
+    output_lines.append(f"Sentences evaluated       : {len(sentence_results)}")
+    output_lines.append(f"Total keystrokes (no pred): {total_without}")
+    output_lines.append(f"Total keystrokes (pred)   : {total_with}")
+    output_lines.append(f"Total keystrokes saved    : {total_saved}")
+    output_lines.append(f"Overall reduction         : {overall_percentage:.1f}%")
+    output_lines.append(f"Avg keystrokes saved/sent : {avg_saved:.1f}")
+    output_lines.append(f"Avg reduction/sentence    : {avg_percentage:.1f}%")
+    output_lines.append("=" * 50)
+
+    out.write("\n".join(output_lines))
+
+    if output_path:
+        out.close()
 
 
 
