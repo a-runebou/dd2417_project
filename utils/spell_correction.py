@@ -4,7 +4,7 @@ from collections import Counter
 
 LETTERS = "abcdefghijklmnopqrstuvwxyz"
 
-def edits1(word: str) -> set[str]:
+def _edits1(word: str) -> set[str]:
     """
     Returns all strings that are one edit away from word 
     Edits: Deletion, insertion, substitution, transposition
@@ -38,29 +38,29 @@ def edits1(word: str) -> set[str]:
     return deletions | insertions | substitutions | transpositions 
 
 
-def known(words: set[str], vocabulary: set[str]) -> set[str]:
+def _known(words: set[str], vocabulary: set[str]) -> set[str]:
     """
     Filters generated words to words that exist in the vocabulary 
     """
     return words & vocabulary
 
-def correction_candidates(
-    prefix: str,
+def get_candidates(
+    word: str,
     word_counts: Counter, 
     max_candidates: int = 100,
     allow_distance_2: bool = True) -> list[str]:
     """
-    Generates spelling-correction candidates for a typed prefix 
+    Generates spelling-correction candidates for a typed word 
     """
-    prefix = prefix.lower()
+    word = word.lower()
     vocabulary = set(word_counts.keys())
-    candidates = known(edits1(prefix), vocabulary)
+    candidates = _known(_edits1(word), vocabulary)
     
     # Edit distance 2 if allowed
     if not candidates and allow_distance_2:
         candidates2 = set()
-        for e1 in edits1(prefix):
-            candidates2.update(known(edits1(e1), vocabulary))
+        for e1 in _edits1(word):
+            candidates2.update(_known(_edits1(e1), vocabulary))
         candidates = candidates2
     
     # Sort candidates by freq 
