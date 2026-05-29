@@ -125,8 +125,8 @@ def parse_args():
 def train(args):
     torch.manual_seed(args.seed)
     
-    if torch.cuda.is_available() and not args.cpu:
-        device = torch.device("cuda")
+    if torch.mps.is_available() and not args.cpu:
+        device = torch.device("mps")
     else:
         device = torch.device("cpu")
         
