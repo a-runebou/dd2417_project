@@ -68,3 +68,10 @@ def save_word_counts(word_counts: Counter, path: str) -> None:
 def load_word_counts(path: str) -> Counter:
     with open(path, "rb") as f:
         return pickle.load(f)
+
+def main():
+    total = build_word_counts_from_files(["data/frankenstein"])
+    save_word_counts(total, "model/word_counts.pkl")
+
+if __name__ == '__main__':
+    main()
