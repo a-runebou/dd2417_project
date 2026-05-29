@@ -1,3 +1,0 @@
-This is training data that is very useful. It is used to train a predictor.
-I like to eat pizza and pasta. I am 22 years old.
-I also like to eat pasta. But I am not 56 years old.
