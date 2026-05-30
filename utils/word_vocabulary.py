@@ -1,7 +1,6 @@
 import re
 import pickle
 from collections import Counter
-
 from utils.text_utils import clean_text
 
 
