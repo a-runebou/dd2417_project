@@ -1,6 +1,6 @@
 
 from utils.word_vocabulary import load_word_counts
-from utils.spell_correction import correction_candidates
+from utils.spell_correction import get_candidates
 
 
 WORD_COUNTS_PATH = "model/word_counts.pkl"
@@ -15,8 +15,8 @@ def main():
         if prefix == "":
             continue
         
-        suggestions = correction_candidates(
-            prefix=prefix,
+        suggestions = get_candidates(
+            word=prefix,
             word_counts=word_counts,
             max_candidates=10,
             allow_distance_2=True
