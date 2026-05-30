@@ -119,7 +119,7 @@ def plot_confusion_matrix(stats: dict, output_path: Path):
 def main():
     word_counts = load_word_counts(WORD_COUNTS_PATH)
     eval_df = pd.read_csv(TEST_CSV_PATH)
-    results = [evaluate_row(row, word_counts, 3) for _, row in eval_df.iterrows()]
+    results = [evaluate_row(row, word_counts, 10) for _, row in eval_df.iterrows()]
     results_df = pd.DataFrame(results)
     stats = compute_confusion_stats(results_df)
     
