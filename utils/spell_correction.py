@@ -54,6 +54,10 @@ def get_candidates(
     """
     word = word.lower()
     vocabulary = set(word_counts.keys())
+    
+    if word in vocabulary:
+        return []
+    
     candidates = _known(_edits1(word), vocabulary)
     
     # Edit distance 2 if allowed
