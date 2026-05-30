@@ -1,5 +1,6 @@
 import customtkinter as ctk
-
+from utils.spell_correction import get_candidates
+from utils.word_vocabulary import load_word_counts
 class App(ctk.CTk):
     def __init__(self, predictors):
         super().__init__()
@@ -98,9 +99,17 @@ class App(ctk.CTk):
         predictor = self.predictors[model.lower()]
         num_preds = 3 if self.num_preds_entry.get() == "" else int(self.num_preds_entry.get())
 
+        word_c = load_word_counts("model/word_counts.pkl")
+        prefix = text.rsplit(" ", 1)[-1] if text else ""
         suggestions = predictor.predict(text, num_preds)
+        spell_suggestions = get_candidates(
+            prefix,
+            word_c,
+            num_preds,
+            True
+        ) 
         self.update_suggestion_btns(suggestions)
-        self.update_spelling_btns(["spelling1", "spelling2"])       # TODO: get spelling suggesitons
+        self.update_spelling_btns(spell_suggestions)
 
     def on_suggestion_click(self, index, type):
         suggestion = None
