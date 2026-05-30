@@ -43,17 +43,34 @@ class App(ctk.CTk):
         self.apply_button = ctk.CTkButton(num_preds_frame, text="Apply", width=60, command=self.apply_num_preds)
         self.apply_button.grid(row=0, column=1)
 
+        self.suggestion_label = ctk.CTkLabel(self, text="Word predictions: ")
+        self.suggestion_label.grid(row=2, column=0, 
+                                  padx=20, pady=0,
+                                  sticky="ew")
+
         self.suggestions_frame = ctk.CTkFrame(self, fg_color="transparent")
-        self.suggestions_frame.grid(row=2, column=0, columnspan=3, padx=20, pady=20, sticky="ew")
+        self.suggestions_frame.grid(row=3, column=0, columnspan=3, padx=20, pady=20, sticky="ew")
+
+        self.spelling_label = ctk.CTkLabel(self, text="Spell checking: ")
+        self.spelling_label.grid(row=4, column=0, 
+                                  padx=20, pady=0,
+                                  sticky="ew")
+
+        self.spelling_frame = ctk.CTkFrame(self, fg_color="transparent")
+        self.spelling_frame.grid(row=5, column=0, columnspan=3, padx=20, pady=20, sticky="ew")
+
 
         self.suggestion_buttons = []
+        self.spelling_buttons = []
         self.rebuild_suggestion_buttons()
+        self.rebuild_spelling_buttons()
 
     def apply_num_preds(self):
         val = self.num_preds_entry.get()
         if val.isdigit() and int(val) > 0:
             self.num_preds = int(val)
             self.rebuild_suggestion_buttons()
+            self.rebuild_spelling_buttons()
 
     def rebuild_suggestion_buttons(self):
         for btn in self.suggestion_buttons:
@@ -61,10 +78,19 @@ class App(ctk.CTk):
         self.suggestion_buttons = []
         for i in range(self.num_preds):
             self.suggestions_frame.grid_columnconfigure(i, weight=1)
-            btn = ctk.CTkButton(self.suggestions_frame, text="", command=lambda i=i: self.on_suggestion_click(i))
+            btn = ctk.CTkButton(self.suggestions_frame, text="", command=lambda i=i: self.on_suggestion_click(i, "suggestion"))
             btn.grid(row=0, column=i, padx=5, sticky="ew")
             self.suggestion_buttons.append(btn)
 
+    def rebuild_spelling_buttons(self):    
+        for btn in self.spelling_buttons:
+            btn.destroy()
+        self.spelling_buttons = []
+        for i in range(self.num_preds):
+            self.spelling_frame.grid_columnconfigure(i, weight=1)
+            btn = ctk.CTkButton(self.spelling_frame, text="", command=lambda i=i: self.on_suggestion_click(i, "spelling"))
+            btn.grid(row=0, column=i, padx=5, sticky="ew")
+            self.spelling_buttons.append(btn)
 
     def on_key_release(self, event):
         text = self.text_entry.get()
@@ -74,9 +100,16 @@ class App(ctk.CTk):
 
         suggestions = predictor.predict(text, num_preds)
         self.update_suggestion_btns(suggestions)
+        self.update_spelling_btns(["spelling1", "spelling2"])       # TODO: get spelling suggesitons
 
-    def on_suggestion_click(self, index):
-        suggestion = self.suggestion_buttons[index].cget("text")
+    def on_suggestion_click(self, index, type):
+        suggestion = None
+        if type == "suggestion":
+            suggestion = self.suggestion_buttons[index].cget("text")
+        elif type == "spelling":
+            suggestion = self.spelling_buttons[index].cget("text")
+        else:
+            print("Error: non-existent suggestion click type")
         current_text = self.text_entry.get()
 
         if suggestion == "":
@@ -95,6 +128,11 @@ class App(ctk.CTk):
 
     def update_suggestion_btns(self, suggestions):
         for i, btn in enumerate(self.suggestion_buttons):
+            suggestion = suggestions[i] if len(suggestions) > i else ""
+            btn.configure(text=suggestion)
+    
+    def update_spelling_btns(self, suggestions):
+        for i, btn in enumerate(self.spelling_buttons):
             suggestion = suggestions[i] if len(suggestions) > i else ""
             btn.configure(text=suggestion)
 
