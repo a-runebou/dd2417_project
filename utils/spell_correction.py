@@ -55,7 +55,7 @@ def get_candidates(
     word = word.lower()
     vocabulary = set(word_counts.keys())
     
-    if word in vocabulary:
+    if word in vocabulary or word == "":
         return []
     
     candidates = _known(_edits1(word), vocabulary)
