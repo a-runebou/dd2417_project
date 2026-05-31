@@ -68,7 +68,7 @@ def run_evaluate(filepath: str, predictor, num_preds: int = 3, output_path: str 
     with open(filepath, 'r', encoding='utf-8') as f:
         lines = [l.strip() for l in f if l.strip()]
 
-    for line in tqdm(lines, desc="hej"):
+    for line in tqdm(lines, desc="Evaluating"):
         line = line.strip()
         if not line:
             continue
@@ -87,13 +87,6 @@ def run_evaluate(filepath: str, predictor, num_preds: int = 3, output_path: str 
             sentence_results.append((sentence, ks_with, ks_without, saved, percentage))
             total_with += ks_with
             total_without += ks_without
-
-            output_lines.append(f"Sentence : {sentence}")
-            output_lines.append(f"  Keystrokes without predictor : {ks_without}")
-            output_lines.append(f"  Keystrokes with predictor    : {ks_with}")
-            output_lines.append(f"  Keystrokes saved             : {saved}")
-            output_lines.append(f"  Reduction                    : {percentage:.1f}%")
-            output_lines.append("")
 
     total_saved = total_without - total_with
     overall_percentage = (total_saved / total_without * 100) if total_without > 0 else 0.0
@@ -133,7 +126,7 @@ def main():
     num_preds = args.num_preds if args.num_preds else 3
 
     if args.predictor == "ngram" or args.predictor == 0:
-        predictor = NgramPredictor("data/frankenstein")
+        predictor = NgramPredictor("data/corpus_books.txt")
         predictor_name = "Ngram"
     elif args.predictor == "transformer" or args.predictor == 1:
         device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -150,7 +143,7 @@ def main():
             model=model,
             tokenizer=tokenizer,
             word_counts=word_counts,
-            max_candidates=300,
+            max_candidates=50,
             frequency_bonus=0.0
         )
         predictor = transformer
